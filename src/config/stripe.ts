@@ -3,5 +3,5 @@ import Stripe from "stripe";
 import { env } from "./env";
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-10-28.acquia", // check Stripe API version you use
+  apiVersion: "2025-11-17.clover", // check Stripe API version you use
 });
