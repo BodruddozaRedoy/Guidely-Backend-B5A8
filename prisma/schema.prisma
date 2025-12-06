@@ -1,0 +1,178 @@
+// ---------- Datasource & Generator ----------
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Enums ----------
+enum Role {
+  TOURIST
+  GUIDE
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+// ---------- NextAuth-compatible models ----------
+// Based on official Auth.js Prisma adapter models :contentReference[oaicite:2]{index=2}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // app-specific fields (from your docs)
+  role              Role     @default(TOURIST)
+  bio               String?
+  profilePic        String?
+  languages         String[] // ["English","Spanish"]
+  expertise         String[] // for guides
+  dailyRate         Int? // per day
+  travelPreferences String?
+
+  // relations
+  accounts Account[]
+  sessions Session[]
+
+  listings          Listing[] @relation("GuideListings")
+  bookingsAsTourist Booking[] @relation("TouristBookings")
+  bookingsAsGuide   Booking[] @relation("GuideBookings")
+  reviewsWritten    Review[]  @relation("ReviewsByTourist")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- App domain models ----------
+
+model Listing {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  itinerary    String?
+  tourFee      Int
+  durationDays Int // "max duration tourist can stay"
+  meetingPoint String
+  maxGroupSize Int
+  city         String
+  country      String?
+  language     String // primary language for tour
+  category     String // "Food", "Art", "Adventure"
+  images       String[] // Cloudinary/ImgBB URLs
+
+  guideId String
+  guide   User   @relation("GuideListings", fields: [guideId], references: [id])
+
+  bookings Booking[]
+  reviews  Review[]
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id        String @id @default(cuid())
+  listingId String
+  touristId String
+  guideId   String
+
+  requestedDate DateTime
+  startTime     DateTime?
+  endTime       DateTime?
+
+  status     BookingStatus @default(PENDING)
+  totalPrice Int
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  tourist User    @relation("TouristBookings", fields: [touristId], references: [id])
+  guide   User    @relation("GuideBookings", fields: [guideId], references: [id])
+
+  payment Payment?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id      String  @id @default(cuid())
+  rating  Int // 1-5
+  comment String?
+
+  listingId String
+  guideId   String
+  touristId String
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  guide   User    @relation(fields: [guideId], references: [id])
+  tourist User    @relation("ReviewsByTourist", fields: [touristId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id                  String        @id @default(cuid())
+  bookingId           String        @unique
+  stripePaymentIntent String        @unique
+  amount              Int
+  currency            String        @default("usd")
+  status              PaymentStatus @default(PENDING)
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
