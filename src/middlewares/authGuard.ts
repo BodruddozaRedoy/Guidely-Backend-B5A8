@@ -1,4 +1,3 @@
-// src/middlewares/authGuard.ts
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError";
@@ -28,10 +27,10 @@ export const authGuard =
     const token = authHeader.split(" ")[1];
 
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || "CHANGE_ME"
-      ) as AuthUser;
+      const secret = (process.env.JWT_SECRET ?? "CHANGE_ME") as string;
+
+      // Fix: cast through unknown
+      const decoded = jwt.verify(token!, secret) as unknown as AuthUser;
 
       if (allowedRoles && !allowedRoles.includes(decoded.role)) {
         return next(new ApiError(403, "Forbidden"));
