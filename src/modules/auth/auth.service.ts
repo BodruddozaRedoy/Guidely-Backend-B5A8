@@ -2,7 +2,7 @@ import { prisma } from "../../config/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ApiError } from "../../utils/ApiError";
-import { Role } from "@prisma/client";
+import { Role } from "../../../generated/prisma/client";
 
 type RegisterPayload = {
   name: string;

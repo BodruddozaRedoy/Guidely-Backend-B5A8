@@ -1,39 +1,37 @@
-// src/modules/payments/payment.service.ts
-import { stripe } from "../../config/stripe";
 import { prisma } from "../../config/prisma";
+import { stripe } from "../../config/stripe";
 import { ApiError } from "../../utils/ApiError";
+import { AuthUser } from "../../middlewares/authGuard";
 
-export const payForBooking = async (bookingId: string, customerId?: string) => {
+export const payForBooking = async (user: AuthUser, bookingId: string) => {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { listing: true },
   });
+
   if (!booking) throw new ApiError(404, "Booking not found");
 
+  if (booking.touristId !== user.id) {
+    throw new ApiError(403, "You cannot pay for this booking");
+  }
+
   if (booking.status !== "CONFIRMED") {
-    throw new ApiError(400, "Only confirmed bookings can be paid");
+    throw new ApiError(400, "Booking must be confirmed before payment");
   }
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: booking.totalPrice, // in smallest currency unit
+    amount: booking.totalPrice * 100,
     currency: "usd",
-    customer: customerId,
-    metadata: {
-      bookingId: booking.id,
-    },
+    metadata: { bookingId },
   });
 
   await prisma.payment.create({
     data: {
-      bookingId: booking.id,
-      stripePaymentIntent: paymentIntent.id,
+      bookingId,
       amount: booking.totalPrice,
       currency: "usd",
-      status: "PENDING",
+      stripePaymentIntent: paymentIntent.id,
     },
   });
 
-  return {
-    clientSecret: paymentIntent.client_secret,
-  };
+  return { clientSecret: paymentIntent.client_secret };
 };
