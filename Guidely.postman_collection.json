@@ -1,0 +1,287 @@
+{
+  "info": {
+    "_postman_id": "7d755b77-42ac-4acd-8d17-0f230251cc11",
+    "name": "Guidely Local Tour Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (Tourist/Guide)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@test.com\",\n  \"password\": \"123456\",\n  \"role\": \"TOURIST\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/register",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/users/{{USER_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "users", "{{USER_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Updated bio\",\n  \"languages\": [\"English\", \"Spanish\"],\n  \"dailyRate\": 200\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/users/{{USER_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "users", "{{USER_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "Create Listing (Guide only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Food Tour\",\n  \"description\": \"Explore local foods\",\n  \"itinerary\": \"Day 1...\",\n  \"tourFee\": 150,\n  \"durationDays\": 2,\n  \"meetingPoint\": \"Central Park\",\n  \"maxGroupSize\": 6,\n  \"city\": \"Dhaka\",\n  \"country\": \"Bangladesh\",\n  \"language\": \"English\",\n  \"category\": \"Food\",\n  \"images\": [\"https://image-url.com\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/listings",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "listings"]
+            }
+          }
+        },
+        {
+          "name": "Get All Listings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/listings",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "listings"]
+            }
+          }
+        },
+        {
+          "name": "Get Listing By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/listings/{{LISTING_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "listings", "{{LISTING_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Listing",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Food Tour\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/listings/{{LISTING_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "listings", "{{LISTING_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Listing",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/listings/{{LISTING_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "listings", "{{LISTING_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking (Tourist only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"{{LISTING_ID}}\",\n  \"requestedDate\": \"2025-12-20T12:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/bookings",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status (Guide only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"CONFIRMED\" }"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/bookings/{{BOOKING_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bookings", "{{BOOKING_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Booking By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bookings/{{BOOKING_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bookings", "{{BOOKING_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/bookings",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "bookings"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Submit Review (Tourist only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{BOOKING_ID}}\",\n  \"rating\": 5,\n  \"comment\": \"Amazing!\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/reviews",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "reviews"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Pay For Booking (Stripe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"bookingId\": \"{{BOOKING_ID}}\" }"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/payments/booking",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "payments", "booking"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:4000" },
+    { "key": "TOKEN", "value": "" },
+    { "key": "USER_ID", "value": "" },
+    { "key": "LISTING_ID", "value": "" },
+    { "key": "BOOKING_ID", "value": "" }
+  ]
+}
