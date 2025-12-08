@@ -30,6 +30,7 @@ export const registerUser = async (payload: RegisterPayload) => {
   // schema extension if you want password-based auth here.
   // (otherwise, manage password within NextAuth's credential logic)
 
+  // const roleValue = payloadrole.toUpperCase();
   const user = await prisma.user.create({
     data: {
       name: payload.name,
