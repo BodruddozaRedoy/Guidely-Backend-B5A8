@@ -38,3 +38,12 @@ export const deleteListing = catchAsync(async (req, res) => {
   await listingService.deleteListing(req.user!, req.params.id!);
   return sendSuccess(res, null, "Listing deleted");
 });
+
+export const toggleListingStatus = catchAsync(async (req, res) => {
+  const updated = await listingService.toggleListingStatus(
+    req.user!,
+    req.params.id!
+  );
+  return sendSuccess(res, updated, "Listing status updated");
+});
+

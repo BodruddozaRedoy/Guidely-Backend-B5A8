@@ -7,7 +7,8 @@ import {
   getListingById,
   updateListing,
   deleteListing,
-  getListingsByGuide, // ⬅️ add this
+  getListingsByGuide,
+  toggleListingStatus, // ⬅️ add this
 } from "./listing.controller";
 
 const router = Router();
@@ -18,6 +19,7 @@ router.get("/:id", getListingById);
 
 // Guide-specific listings (PUBLIC)
 router.get("/guide/:guideId", getListingsByGuide); // ⬅️ IMPORTANT
+router.patch("/:id/toggle", authGuard(["GUIDE"]), toggleListingStatus);
 
 // Guide-only actions
 router.post("/", authGuard(["GUIDE"]), createListing);

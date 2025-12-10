@@ -8,11 +8,14 @@ export const createBooking = catchAsync(async (req, res) => {
 });
 
 export const updateBookingStatus = catchAsync(async (req, res) => {
+  const { status } = req.body;
+
   const booking = await bookingService.updateBookingStatus(
     req.user!,
     req.params.id!,
-    req.body.status
+    status
   );
+
   return sendSuccess(res, booking, "Booking updated");
 });
 
