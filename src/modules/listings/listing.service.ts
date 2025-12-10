@@ -3,26 +3,16 @@ import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/ApiError";
 import { AuthUser } from "../../middlewares/authGuard";
 
-type ListingFilters = {
-  city?: string;
-  language?: string;
-  category?: string;
-  minPrice?: string;
-  maxPrice?: string;
-};
-
 export const getListings = async (query: any) => {
-  const filters: ListingFilters = query;
-
   return prisma.listing.findMany({
     where: {
       isActive: true,
-      city: filters.city || undefined,
-      language: filters.language || undefined,
-      category: filters.category || undefined,
+      city: query.city || undefined,
+      language: query.language || undefined,
+      category: query.category || undefined,
       tourFee: {
-        gte: filters.minPrice ? Number(filters.minPrice) : undefined,
-        lte: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+        gte: query.minPrice ? Number(query.minPrice) : undefined,
+        lte: query.maxPrice ? Number(query.maxPrice) : undefined,
       },
     },
     include: {
@@ -40,8 +30,20 @@ export const getListingById = async (id: string) => {
       reviews: true,
     },
   });
+
   if (!listing) throw new ApiError(404, "Listing not found");
   return listing;
+};
+
+// ⬅️ REQUIRED FOR GUIDE DASHBOARD
+export const getListingsByGuide = async (guideId: string) => {
+  return prisma.listing.findMany({
+    where: { guideId },
+    include: {
+      guide: true,
+      reviews: true,
+    },
+  });
 };
 
 export const createListing = async (guideId: string, payload: any) => {

@@ -39,6 +39,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  passwordHash String?
+
 
   // app-specific fields (from your docs)
   role              Role     @default(TOURIST)
