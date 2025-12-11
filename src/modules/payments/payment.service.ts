@@ -9,29 +9,32 @@ export const payForBooking = async (user: AuthUser, bookingId: string) => {
   });
 
   if (!booking) throw new ApiError(404, "Booking not found");
-
-  if (booking.touristId !== user.id) {
+  if (booking.touristId !== user.id)
     throw new ApiError(403, "You cannot pay for this booking");
-  }
-
-  if (booking.status !== "CONFIRMED") {
+  if (booking.status !== "CONFIRMED")
     throw new ApiError(400, "Booking must be confirmed before payment");
-  }
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: booking.totalPrice * 100,
     currency: "usd",
-    metadata: { bookingId },
+    automatic_payment_methods: { enabled: true },
   });
 
-  await prisma.payment.create({
-    data: {
-      bookingId,
-      amount: booking.totalPrice,
-      currency: "usd",
-      stripePaymentIntent: paymentIntent.id,
-    },
+  // Check existing payment to avoid duplicate
+  const existingPayment = await prisma.payment.findUnique({
+    where: { bookingId },
   });
+
+  if (!existingPayment) {
+    await prisma.payment.create({
+      data: {
+        bookingId,
+        amount: booking.totalPrice,
+        currency: "usd",
+        stripePaymentIntent: paymentIntent.id,
+      },
+    });
+  }
 
   return { clientSecret: paymentIntent.client_secret };
 };
