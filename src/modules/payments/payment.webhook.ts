@@ -1,22 +1,22 @@
-import { Router } from "express";
+import express, { Router, Request, Response } from "express";
 import { stripe } from "../../config/stripe";
 import { prisma } from "../../config/prisma";
 
 const router = Router();
 
-// RAW middleware needed
+// RAW middleware required by Stripe for signature verification
 router.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"];
+  async (req: Request, res: Response) => {
+    const sig = req.headers["stripe-signature"] as string;
 
     let event;
 
     try {
       event = stripe.webhooks.constructEvent(
         req.body,
-        sig!,
+        sig,
         process.env.STRIPE_WEBHOOK_SECRET!
       );
     } catch (err: any) {
@@ -26,7 +26,7 @@ router.post(
 
     // Handle successful payment
     if (event.type === "payment_intent.succeeded") {
-      const paymentIntent = event.data.object;
+      const paymentIntent = event.data.object as any;
       const bookingId = paymentIntent.metadata.bookingId;
 
       console.log("Booking Payment Success:", bookingId);
