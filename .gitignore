@@ -2,8 +2,14 @@
 # Node and build artifacts
 # ------------------------------
 node_modules/
+
+# Ignore local build output, BUT allow Render to generate it
 dist/
+!dist/.gitkeep
+
 build/
+!build/.gitkeep
+
 .next/
 out/
 .vercel/
@@ -19,8 +25,13 @@ out/
 # ------------------------------
 # Prisma and generated clients
 # ------------------------------
-/prisma/generated/
-/src/generated/prisma/
+# Prisma generates this during build, DO NOT ignore it
+# REMOVE these lines:
+# /prisma/generated/
+# /src/generated/prisma/
+
+# Instead ignore only temp metadata
+.prisma/
 
 # ------------------------------
 # Logs and debug output
@@ -39,3 +50,10 @@ Thumbs.db
 *.local
 .cache/
 coverage/
+
+
+# Prisma generated client (do not commit)
+generated/
+generated/prisma/
+src/generated/
+src/generated/prisma/

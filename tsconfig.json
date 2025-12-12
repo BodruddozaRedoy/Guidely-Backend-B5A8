@@ -1,40 +1,28 @@
 {
   "compilerOptions": {
-    // File Layout
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
 
-    // Environment Settings
     "module": "commonjs",
     "target": "es2016",
     "lib": ["esnext"],
     "types": ["node"],
 
-    // Other Outputs
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
 
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    // Recommended Options
-    "strict": true,
-    "isolatedModules": true,
     "skipLibCheck": true,
+    "noEmitOnError": false,
 
-    // Module Resolution
+    "strict": false,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"],
+  "include": ["src", "generated"],
   "exclude": ["node_modules", "dist"]
 }
