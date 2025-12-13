@@ -7,6 +7,7 @@ import { bookingRouter } from "../modules/bookings/booking.routes";
 import { reviewRouter } from "../modules/reviews/review.routes";
 import { paymentRouter } from "../modules/payments/payment.routes";
 import { adminRouter } from "../modules/admin/admin.routes";
+import { guidesRouter } from "../modules/guide/guides.route";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/bookings", bookingRouter); // /api/bookings...
 router.use("/reviews", reviewRouter); // /api/reviews...
 router.use("/payments", paymentRouter); // /api/payments/booking etc.
 router.use("/admin", adminRouter);
+router.use("/guides", guidesRouter);
 
 export default router;
