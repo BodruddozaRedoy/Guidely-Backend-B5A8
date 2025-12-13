@@ -99,16 +99,26 @@ export const deleteListing = async (user: AuthUser, listingId: string) => {
 };
 
 
-export const toggleListingStatus = async (user: AuthUser, id: string) => {
-  const listing = await prisma.listing.findUnique({ where: { id } });
+export const toggleListing = async (user: AuthUser, id: string) => {
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+  });
+
   if (!listing) throw new ApiError(404, "Listing not found");
 
-  if (listing.guideId !== user.id && user.role !== "ADMIN") {
-    throw new ApiError(403, "Unauthorized");
+  // GUIDE can update only their listings
+  if (user.role === "GUIDE" && listing.guideId !== user.id) {
+    throw new ApiError(403, "Not authorized to update this listing");
   }
 
-  return prisma.listing.update({
+  // ADMIN can update any listing
+  // No extra check needed for admin
+
+  const updated = await prisma.listing.update({
     where: { id },
     data: { isActive: !listing.isActive },
   });
+
+  return updated;
 };
+

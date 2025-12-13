@@ -19,11 +19,13 @@ router.get("/:id", getListingById);
 
 // Guide-specific listings (PUBLIC)
 router.get("/guide/:guideId", getListingsByGuide); // ⬅️ IMPORTANT
-router.patch("/:id/toggle", authGuard(["GUIDE"]), toggleListingStatus);
+router.patch("/:id/toggle", authGuard(["GUIDE", "ADMIN"]), toggleListingStatus);
 
 // Guide-only actions
 router.post("/", authGuard(["GUIDE"]), createListing);
 router.patch("/:id", authGuard(["GUIDE"]), updateListing);
 router.delete("/:id", authGuard(["GUIDE", "ADMIN"]), deleteListing);
+// router.patch("/:id/toggle", authGuard(["GUIDE", "ADMIN"]), toggleListingStatus);
+
 
 export { router as listingRouter };

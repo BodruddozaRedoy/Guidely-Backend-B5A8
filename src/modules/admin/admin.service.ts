@@ -44,7 +44,10 @@ export const getTourById = async (id: string) => {
 };
 
 export const deleteTour = async (id: string) => {
-  await prisma.listing.delete({ where: { id } });
+  return prisma.listing.update({
+    where: { id },
+    data: { isActive: false },
+  });
 };
 
 export const toggleTourStatus = async (id: string) => {

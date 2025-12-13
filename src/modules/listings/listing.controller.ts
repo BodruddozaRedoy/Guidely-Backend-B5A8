@@ -40,10 +40,8 @@ export const deleteListing = catchAsync(async (req, res) => {
 });
 
 export const toggleListingStatus = catchAsync(async (req, res) => {
-  const updated = await listingService.toggleListingStatus(
-    req.user!,
-    req.params.id!
-  );
-  return sendSuccess(res, updated, "Listing status updated");
+  const listing = await listingService.toggleListing(req.user!, req.params.id);
+  return sendSuccess(res, listing, "Listing status updated");
 });
+
 
